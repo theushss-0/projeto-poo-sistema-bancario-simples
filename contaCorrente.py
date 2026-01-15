@@ -57,7 +57,7 @@ class ContaCorrente(Conta):
     
     def depositar(self,valor:float):
 
-        if(self.valor <= 0):
+        if(valor <= 0):
             return f"Valor invalido!"
         
         self._saldo += valor

@@ -2,7 +2,7 @@ import os
 
 from cliente import Cliente
 
-
+from conta  import Conta
 from contaCorrente import ContaCorrente
 from contaPoupanca import ContaPoupanca
 
@@ -11,7 +11,13 @@ from banco import Banco
 cliente_sessao = 0
 idCliente = 0
 lista_clientes = []
-lista_bancos = [(999, Banco(999,"CAIXA"))]
+lista_bancos = [
+    (999, Banco(999,"Caixa")),
+    (1, Banco(1,"Brasil")),
+    (237, Banco(237,"Bradesco")),
+    (33, Banco(33,"Santander")),
+    (341, Banco(341,"Itau")),
+]
 
 MENU = """
 --------------------------------------
@@ -29,7 +35,7 @@ def validaCliente():
     global cliente_sessao
 
     print("\nVocê já está cadastrado como cliente? S/N")
-    opcao = input("\n=>")
+    opcao = input("\n=>").upper()
     
     if opcao not in ('S', 'N'):
         os.system("clear")
@@ -62,11 +68,9 @@ def validaCliente():
     cliente_sessao = encontrado[0][1]
     return True
 
-# Metodo que inclui uma nova conta  
-def incluirNovaConta(cliente:Cliente, tipo):
-    opcao = ''
-    print("")
+def encontrarBanco():
     while True:
+        print("0 - Para sair")
         print("INFORME QUAL O SEU BANCO")
         for banco in lista_bancos:
             print(banco[0], " - ", banco[1].nome_banco)
@@ -78,7 +82,12 @@ def incluirNovaConta(cliente:Cliente, tipo):
         except Exception as error:
             print(f"Error: {error}")
             continue
-
+        
+        if opcao == 0:
+            os.system("clear")
+            print("saindo...")
+            return None
+        
         encontrado = list(filter(lambda banco: banco[0] == opcao, lista_bancos))
         
         if not encontrado:
@@ -87,6 +96,17 @@ def incluirNovaConta(cliente:Cliente, tipo):
             continue
 
         bancoSelecionado = encontrado[0][1]
+        return bancoSelecionado
+
+# Metodo que inclui uma nova conta  
+def incluirNovaConta(cliente:Cliente, tipo)-> None | Banco:
+
+    while True:
+        bancoSelecionado = encontrarBanco()
+        if bancoSelecionado is None:
+            os.system("clear")
+            return 0
+        
         try:
             agenciaConta = int(input("Informe a agencia: "))
             numeroConta = int(input("Informe o numero da conta: "))
@@ -107,6 +127,10 @@ def incluirNovaConta(cliente:Cliente, tipo):
             os.sytem("clear")
             print("Tipo incorreto!!")
             continue
+        
+        if cliente.conta != None:
+            os.system("clear")
+            return 0, "Esse cliente já possui uma conta cadastrada!"
 
         cliente.conta = cliConta
         bancoSelecionado.inserir_cliente(cliente)
@@ -124,14 +148,7 @@ def incluirNovaConta(cliente:Cliente, tipo):
 
         print()
 
-        print("Deseja cadastrar uma nova conta ? S/N")
-        sair = input("=>").upper()
-
-        if sair == 'S':
-            os.system("clear")
-            continue
-        else:
-            return 0
+        return 0, "Saindo..."
 
 
 
@@ -166,14 +183,16 @@ def cadastrarConta():
 
         elif tipoConta == '1':
             retorno = incluirNovaConta(cliente_sessao, tipoConta)
-            if retorno == 0:
+            if retorno[0] == 0:
                 os.system("clear")
+                print(retorno[1])
                 return
 
         elif tipoConta == '2':
             retorno = incluirNovaConta(cliente_sessao, tipoConta)
-            if retorno == 0:
+            if retorno[0] == 0:
                 os.system("clear")
+                print(retorno[1])
                 return
 
 
@@ -218,9 +237,106 @@ def cadastrarCliente():
             print("Saindo...")
             break
 
-        
+def realizarOperacaoConta(banco:Banco, conta:Conta, cliente:Cliente, id_cliente):
+    if banco:
+        os.system("clear")
+    menuOpcoes = """
+    1 - Depositar
+    2 - Sacar
+    
+    9 - Entrar em outra conta
+    0 - Sair
+    """
+    while True:
+        print("-------------------------------")
+        print("         CONTA BANCARIA        ")
+        print("-------------------------------")
+        print(f"ID cliente: {id_cliente}")
+        print(f"Nome cliente: {cliente.nome} {cliente.sobrenome}")
+        print(f"Saldo conta: R${conta.saldo:.2f}")
+        print("-------------------------------")
+        print(menuOpcoes)
+        print("-------------------------------")
+        print("Informe o que deseja fazer")
+        try:
+            opcao = int(input("=>"))
+        except TypeError:
+            os.system("clear")
+            print("Informe apenas numeros!")
+            continue
+
+        if opcao not in (0,1,2,9):
+            os.system("clear")
+            print("Opção informada invalida!!")
+            continue
+
+        if opcao == 0:
+            os.system("clear")
+            print("Saindo da conta")
+            return False
+        if opcao == 9:
+            os.system("clear")
+            print("Saindo da conta")
+            return True
+
+        if opcao == 1:
+            os.system("clear")
+            try:
+                valor_deposito = round(float(input("Qual o valor que deseja Depositar\n=>").replace(",",".")),4)
+            except TypeError:
+                os.system("clear")
+                print("Deve ser informado apenas valorer numericos do tipo Real(float)")
+                continue
+            except Exception as error:
+                os.system("clear")
+                print(f"Error: {error}")
+                continue
+
+            retorno = banco.realizarDeposito(conta, cliente, valor_deposito)
+            if retorno:
+                os.system("clear")
+                print(retorno)
+                continue
+            else:
+                os.system("clear")
+                print("Algo deu errado na operação!!")
+                continue
+        if opcao == 2:
+            os.system("clear")
+            try:
+                valor_saque = round(float(input("Qual o valor que deseja Sacar\n=>").replace(",",".")),4)
+            except TypeError:
+                os.system("clear")
+                print("Deve ser informado apenas valores numericos do tipo Real(float)")
+                continue
+            except Exception as error:
+                os.system("clear")
+                print(f"Error: {error}")
+                continue
+
+            retorno = banco.realizarSaque(conta, cliente, valor_saque)
+            if retorno:
+                os.system("clear")
+                print(retorno)
+                continue
+            else:
+                os.system("clear")
+                print("Algo deu errado na operação!!")
+                continue
+
+            
+            
+
+
+
+
+
+
+
 
 def entrarNaConta():
+
+    global lista_clientes
     while True:
         print("-------------------------------")
         print("         ACESSAR CONTA         ")
@@ -229,12 +345,8 @@ def entrarNaConta():
         print()
         try:
             print("Informe o ID do seu cliente")
-            aux_cliente = int(input("=>"))
-            print("Informe o numero do banco")
-            aux_banco = int(input("=>"))
-            print("Informe a Agencia")
-            aux_agencia = int(input('=>'))
-            print("Informe o numero da sua conta")
+            aux_id_cliente = int(input("=>"))
+            print("Informe o numero da conta")
             aux_numero_conta = int(input("=>"))
         except TypeError:
             os.system("clear")
@@ -244,41 +356,48 @@ def entrarNaConta():
             os.system("clear")
             print(f"Error: {error}")
             continue
-        
 
-        if aux_cliente not in lista_clientes[0]:
-            os.system("clear")
-            print("cliente não encontrado")
-            continue
-
-        encontrado = list(filter(lambda banco: banco[0] == aux_banco, lista_bancos))
+        encontrado = list(filter(lambda cliente: cliente[0] == aux_id_cliente, lista_clientes))
 
         if not encontrado:
             os.system("clear")
-            print("Não foi possível localizar o banco informado")
+            print("Cliente não encontrado!")
             continue
 
-        bancoSelecionado = encontrado[0][1]
+        aux_cliente = encontrado[0][1]
+        aux_conta = aux_cliente.conta
 
-
-        if aux_agencia not in bancoSelecionado.agencias:
+        if aux_numero_conta != aux_conta.numero_conta:
             os.system("clear")
-            print("Essa agencia não é deste banco!")
+            print("Conta não localizada")
+            continue
+        
+        bancoSelecionado = encontrarBanco()
+
+        if bancoSelecionado == None:
+            os.system("clear")
+            print("Banco não encontrado!")
+            continue
+        
+        cliente_x_banco = bancoSelecionado.verificar_cliente(aux_cliente)
+        conta_x_banco = bancoSelecionado.verificar_conta(aux_conta)
+
+        if not cliente_x_banco:
+            os.system("clear")
+            print("Cliente não relacionado a este banco!")
             continue
 
-        if aux_numero_conta not in bancoSelecionado.contas.numero_conta:
-            print("Numero da conta não encontrada!")
+        if not conta_x_banco:
+            os.system("clear")
+            print("Conta não encontrada para este banco!")
             continue
 
+        retorno = realizarOperacaoConta(bancoSelecionado, aux_conta, aux_cliente, aux_id_cliente)
+
+        if not retorno:
+            return
         
-
-
-
-
-        
-
-
-
+        continue
 
 
 
@@ -307,5 +426,3 @@ def start():
         if opcao == "3":
             os.system("clear")
             entrarNaConta()
-
-start()
