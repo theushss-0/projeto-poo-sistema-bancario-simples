@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class Conta(ABC):
     
-    def __init__(self, agencia, numero_conta, saldo):
+    def __init__(self, agencia, numero_conta, saldo:float):
        self._agencia = agencia
        self._numero_conta = numero_conta
        self._saldo = saldo

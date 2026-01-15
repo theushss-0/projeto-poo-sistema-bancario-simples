@@ -42,13 +42,8 @@ class ContaCorrente(Conta):
     @property
     def saldo_total(self):
         return self._saldo + self._limite_extra
-    
-    # # # # # # # # # # 
-    # METODO DE SACAR #
-    # # # # # # # # # # 
-    
-    def sacar(self,valor: float):
 
+    def sacar(self,valor: float):
 
         if(valor <= 0):
             return "Informe um valor maior que 0!"
@@ -59,9 +54,6 @@ class ContaCorrente(Conta):
         self._saldo -= valor
         return f"Saque realizado com sucesso!\nSaldo Atual: R$ {self._saldo:.2f}"
 
-    # # # # # # # # # # # #
-    # METODO DE DEPOSITAR #
-    # # # # # # # # # # # # 
     
     def depositar(self,valor:float):
 
