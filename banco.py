@@ -21,9 +21,18 @@ class Banco:
     def agencias(self):
         return self._agencias
     
+    @property
+    def contas(self):
+        return self._contas
+    
+    @property
+    def clientes(self):
+        return self._clientes
+    
     @agencias.setter
     def agencias(self, agencia):
         self._agencias.append(agencia)
+
 
     def verificar_agencia(self,conta:Conta):
         if conta.agencia not in self._agencias:

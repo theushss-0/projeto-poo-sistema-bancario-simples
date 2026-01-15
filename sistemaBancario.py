@@ -180,7 +180,7 @@ def cadastrarConta():
 
 
 def cadastrarCliente():
-    global idCliente
+    global idCliente, lista_clientes
     while True:
         print("-------------------------------")
         print("     CADASTRO DE CLIENTE       ")
@@ -221,7 +221,63 @@ def cadastrarCliente():
         
 
 def entrarNaConta():
-    ...
+    while True:
+        print("-------------------------------")
+        print("         ACESSAR CONTA         ")
+        print("-------------------------------")
+
+        print()
+        try:
+            print("Informe o ID do seu cliente")
+            aux_cliente = int(input("=>"))
+            print("Informe o numero do banco")
+            aux_banco = int(input("=>"))
+            print("Informe a Agencia")
+            aux_agencia = int(input('=>'))
+            print("Informe o numero da sua conta")
+            aux_numero_conta = int(input("=>"))
+        except TypeError:
+            os.system("clear")
+            print("Informe apenas numeros")
+            continue
+        except Exception as error:
+            os.system("clear")
+            print(f"Error: {error}")
+            continue
+        
+
+        if aux_cliente not in lista_clientes[0]:
+            os.system("clear")
+            print("cliente não encontrado")
+            continue
+
+        encontrado = list(filter(lambda banco: banco[0] == aux_banco, lista_bancos))
+
+        if not encontrado:
+            os.system("clear")
+            print("Não foi possível localizar o banco informado")
+            continue
+
+        bancoSelecionado = encontrado[0][1]
+
+
+        if aux_agencia not in bancoSelecionado.agencias:
+            os.system("clear")
+            print("Essa agencia não é deste banco!")
+            continue
+
+        if aux_numero_conta not in bancoSelecionado.contas.numero_conta:
+            print("Numero da conta não encontrada!")
+            continue
+
+        
+
+
+
+
+        
+
+
 
 
 
