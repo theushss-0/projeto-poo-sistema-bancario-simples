@@ -38,12 +38,5 @@ class ContaPoupanca(Conta):
         
         self.saldo -= valor
         return "Saque realizado com sucesso!"
-    
-    def depositar(self,valor):
 
-        if (valor <= 0):
-            return "Valor invalido!"
-        
-        self._saldo += valor
-        return f"Deposito realizado com sucesso!\nSaldo atual: R$ {self._saldo:.2f}"
     

@@ -34,7 +34,15 @@ class Conta(ABC):
     @abstractmethod
     def sacar(self,valor):...
 
-    @abstractmethod
-    def depositar(self,valor):...
+    def depositar(self,valor:float):
+
+        if(valor <= 0):
+            return f"Valor invalido!"
+        
+        self._saldo += valor
+        return f"Deposito realizado com sucesso!\nSaldo atual: R$ {self._saldo:.2f}"
+
+
+
 
     

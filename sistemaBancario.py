@@ -99,7 +99,7 @@ def encontrarBanco():
         return bancoSelecionado
 
 # Metodo que inclui uma nova conta  
-def incluirNovaConta(cliente:Cliente, tipo)-> None | Banco:
+def incluirNovaConta(cliente:Cliente, tipo):
 
     while True:
         bancoSelecionado = encontrarBanco()
@@ -124,7 +124,7 @@ def incluirNovaConta(cliente:Cliente, tipo)-> None | Banco:
             cliConta = ContaPoupanca(agenciaConta, numeroConta, saldoConta)
             os.system("clear")
         else:
-            os.sytem("clear")
+            os.system("clear")
             print("Tipo incorreto!!")
             continue
         
